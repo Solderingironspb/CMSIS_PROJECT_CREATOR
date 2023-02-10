@@ -65,10 +65,10 @@
 
 #define USBD_VID     1155
 #define USBD_LANGID_STRING     1033
-#define USBD_MANUFACTURER_STRING     "NES_Controller_1"
+#define USBD_MANUFACTURER_STRING     "Soldering iron"
 #define USBD_PID_FS     22352
-#define USBD_PRODUCT_STRING_FS     "STM32 Custom Human interface"
-#define USBD_CONFIGURATION_STRING_FS     "Custom HID Config"
+#define USBD_PRODUCT_STRING_FS       "Test_Custom_HID"
+#define USBD_CONFIGURATION_STRING_FS "Custom HID Config"
 #define USBD_INTERFACE_STRING_FS     "Custom HID Interface"
 
 /* USER CODE BEGIN PRIVATE_DEFINES */
