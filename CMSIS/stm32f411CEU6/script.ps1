@@ -5,6 +5,7 @@ $name = $args[0]
 (Get-Content Clean_project.ioc) | ForEach-Object { $_ -replace "Clean_project", $name } | Set-Content Clean_project.ioc
 (Get-Content STM32F411CEUX_FLASH.ld) | ForEach-Object { $_ -replace "Clean_project", $name } | Set-Content STM32F411CEUX_FLASH.ld
 (Get-Content STM32F411CEUX_RAM.ld) | ForEach-Object { $_ -replace "Clean_project", $name } | Set-Content STM32F411CEUX_RAM.ld
+(Get-Content Makefile) | ForEach-Object { $_ -replace "Clean_project", $name } | Set-Content Makefile
 $filename = $name + ".ioc"
 Rename-Item Clean_project.ioc $filename
 echo "Job is done"

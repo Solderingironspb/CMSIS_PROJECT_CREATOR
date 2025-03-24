@@ -1,0 +1,26 @@
+﻿{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Cortex Debug",
+            "cwd": "${workspaceFolder}",
+            "executable": "Debug/Clean_project.elf", //Данную строку можно обновить через Makefile:Update JSON files (Experimental)
+            "request": "launch",
+            "type": "cortex-debug", //Отладчик. В нашем случае Extension Cortex-debug
+            "gdbPath": "C:/dev_tools/STM32_tools/gnu-tools-for-stm32.12.3/tools/bin/arm-none-eabi-gdb.exe", //Данную строку можно обновить через Makefile:Update JSON files (Experimental)
+            "servertype": "openocd", //тип отладчика
+            "serverArgs": [
+                "-d3"
+            ],
+            "serverpath": "C:/dev_tools/STM32_tools/OpenOCD-20240916-0.12.0/bin/openocd.exe", //Данную строку можно обновить через Makefile:Update JSON files (Experimental)
+            "configFiles": ["C:/dev_tools/STM32_tools/OpenOCD-20240916-0.12.0/share/openocd/scripts/interface/stlink.cfg", "C:/dev_tools/STM32_tools/OpenOCD-20240916-0.12.0/share/openocd/scripts/target/stm32f1x.cfg"], //Данную строку можно обновить через Makefile:Update JSON files (Experimental)
+            "svdFile": "C:/dev_tools/STM32_tools/cmsis-svd-stm32/stm32f1/STM32F103.svd", //Данную строку можно обновить через Makefile:Update JSON files (Experimental)
+            "liveWatch": {
+                "enabled": true //Использовать LiveWatch
+            },
+            "preLaunchTask": "Run All Tasks", //Соберем проект перед отладкой
+            "runToEntryPoint": "main", //Поставим точку останова в main
+            "postDebugTask": "Monitor resume" //Запустим задачу Monitor resume, чтоб после завершения дебага микроконтроллер снялся с паузы и продолжил работать дальше
+        }
+    ]
+}

@@ -1,6 +1,6 @@
-#   Makefile for STM32F030K6T6
+#   Makefile for STM32F407VGT6
 #   Автор: Волков Олег
-#   Дата создания скрипта: 23.03.2025
+#   Дата создания скрипта: 24.03.2025
 #   GitHub: https://github.com/Solderingironspb
 #   Группа Вконтакте: https://vk.com/solderingiron.stm32
 #   YouTube: https://www.youtube.com/channel/UCzZKTNVpcMSALU57G1THoVw
@@ -25,7 +25,7 @@ OPEN_OCD_INTERFACE_PATH = $(OPEN_OCD_PATH)/share/openocd/scripts/interface/stlin
 OPEN_OCD_TARGET_PATH = $(OPEN_OCD_PATH)/share/openocd/scripts/target/stm32f1x.cfg
 
 # SVD файл для описания периферии микроконтроллера
-SVD_FILE_PATH = C:/dev_tools/STM32_tools/cmsis-svd-stm32/stm32f0/STM32F0x0.svd
+SVD_FILE_PATH = C:/dev_tools/STM32_tools/cmsis-svd-stm32/stm32f4/STM32F407.svd
 
 #####################################################################################
 # Название проекта
@@ -45,12 +45,12 @@ C_SOURCES = \
 Core/Src/main.c \
 Core/Src/syscalls.c \
 Core/Src/sysmem.c \
-Core/Src/system_stm32f0xx.c
+Core/Src/system_stm32f4xx.c
 # Assembly (Обратите внимание, почему-то STM32 выпускает ASM файлы, 
 # то с расширением *.S, то c расширением *.s). Это важно. 
 # Для унификации переименуйте в *.s (с маленькой буквой)
 ASM_SOURCES = \
-Core/Startup/startup_stm32f030k6tx.s
+Core/Startup/startup_stm32f407vgtx.s
 
 #####################################################################################
 # Include location (Вводим через пробел, либо с новой строки, но с знаком '\' в конце)
@@ -67,10 +67,10 @@ AS_INCLUDES =
 # MCU_Settings
 #####################################################################################
 
-CPU = -mcpu=cortex-m0 
+CPU = -mcpu=cortex-m4
 INSTRUCTION_SET = -mthumb
-FPU =
-FLOAT_ABI = -mfloat-abi=soft
+FPU = -mfpu=fpv4-sp-d16
+FLOAT_ABI = -mfloat-abi=hard
 
 MCU = $(CPU) $(INCTRUCTION_SET) $(FPU) $(FLOAT_ABI) -specs=nano.specs
 
@@ -78,9 +78,9 @@ MCU = $(CPU) $(INCTRUCTION_SET) $(FPU) $(FLOAT_ABI) -specs=nano.specs
 # MCU_GCC_Compiler (CFLAGS) (ASFLAGS)
 #####################################################################################
 
-# Defines (Записываются через пробел. Пример: C_DEFS =  DEBUG STM32F103xB)
+# Defines (Записываются через пробел. Пример: C_DEFS =  DEBUG STM32F407xx)
 # GNU C
-C_DEFS =  DEBUG STM32F030x6
+C_DEFS =  DEBUG STM32F407xx
 # Assembly
 AS_DEFS = DEBUG
 
@@ -127,7 +127,7 @@ BIN = $(CP) -O binary -S
 #####################################################################################
 # link script
 LDSCRIPT = \
-STM32F030K6TX_FLASH.ld
+STM32F407VGTX_FLASH.ld \
 
 # libraries
 LIBS = -Wl,--start-group -lc -lm -Wl,--end-group
@@ -188,7 +188,7 @@ flash: all
 	$(OPEN_OCD_BIN_PATH) -f $(OPEN_OCD_INTERFACE_PATH) -f $(OPEN_OCD_TARGET_PATH) -c "program $(BUILD_DIR)/$(TARGET).elf verify reset exit"
 
 erase: 
-	$(OPEN_OCD_BIN_PATH) -f $(OPEN_OCD_INTERFACE_PATH) -f $(OPEN_OCD_TARGET_PATH) -c "init; reset halt; stm32f0x mass_erase 0; reset run; exit"
+	$(OPEN_OCD_BIN_PATH) -f $(OPEN_OCD_INTERFACE_PATH) -f $(OPEN_OCD_TARGET_PATH) -c "init; reset halt; stm32f4x mass_erase 0; reset run; exit"
 
 resume:
 	$(OPEN_OCD_BIN_PATH) -f $(OPEN_OCD_INTERFACE_PATH) -f $(OPEN_OCD_TARGET_PATH) -c "init; reset halt; resume; exit"
