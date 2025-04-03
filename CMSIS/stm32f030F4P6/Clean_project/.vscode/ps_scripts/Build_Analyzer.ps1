@@ -98,14 +98,22 @@ $sections = @('.isr_vector', '.text', '.rodata', '.ARM', '.init_array', '.fini_a
 # Создаем хэш-таблицу для хранения результатов
 $sectionSizes = @{}
 
-# Обрабатываем каждую секцию
-foreach ($section in $sections) {
-    $line = $sizeOutput | Select-String -Pattern $section
-    if ($line) {
-        $size = ($line -split '\s+')[1]
-        $sectionSizes[$section] = [int]$size
+foreach ($line in $sizeOutput -split "`n") {
+    $line = $line.Trim()
+    if (-not $line) { continue }  # Пропускаем пустые строки
+
+    foreach ($section in $sections) {
+        if ($line -match "^$section\s+(\d+)\s+\d+") {
+            $size = $matches[1]
+            $sectionSizes[$section] = [int]$size
+            break  # Переходим к следующей строке
+        }
     }
-    else {
+}
+
+# Проверяем, все ли секции найдены
+foreach ($section in $sections) {
+    if (-not $sectionSizes.ContainsKey($section)) {
         Write-Warning "Секция $section не найдена в выводе."
     }
 }

@@ -109,5 +109,5 @@ foreach ($file in $ldFiles) {
     }
 }
 
-Write-Host ""
-Read-Host
+#Write-Host ""
+#Read-Host
