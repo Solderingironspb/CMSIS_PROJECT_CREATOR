@@ -60,6 +60,12 @@ Core/Startup/startup_stm32f030f4px.s
 C_INCLUDES = \
 Core/Inc/ \
 Drivers/CMSIS/
+
+# Явно укажем путь до стандартных библиотек. Это на самом деле не особо нужно, но Clangd
+# иначе не поймет и будет показывать ошибки там, где их нет...
+STD_C_INCLUDES = C:/dev_tools/STM32_tools/gnu-tools-for-stm32.12.3/tools/arm-none-eabi/include
+C_INCLUDES += $(STD_C_INCLUDES)
+
 # Assembly includes
 AS_INCLUDES = 
 
