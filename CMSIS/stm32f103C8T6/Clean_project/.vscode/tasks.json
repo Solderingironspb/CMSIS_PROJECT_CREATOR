@@ -56,8 +56,8 @@
                 "-File",
                 ".vscode/ps_scripts/Build_Analyzer.ps1", //Расположение скрипта
                 //Введите свои настройки:
-                "Debug/Clean_project.elf", //Расположение *.elf файла
-                "Debug/Clean_project.map", //Расположение *.map файла
+                "Debug/GD32F103.elf", //Расположение *.elf файла
+                "Debug/GD32F103.map" //Расположение *.map файла
             ],
             "problemMatcher": [],
             "presentation": {
@@ -136,13 +136,37 @@
             "detail": "Продолжить работу микроконтроллера после отладки"
         },
         /*================  Продолжить работу микроконтроллера после отладки ================*/
+
+        /*================  clangd Udpate ================*/
+        {
+            "label": "Clangd_update", //Продолжить работу мк после отладки
+            "type": "shell",
+            "command": "compiledb make -j12 all",
+            "icon": {
+                "color": "terminal.ansiGreen",
+                "id": "add"
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "echo": true, // Отключает вывод команды задачи (* Executing task: ...)
+                "reveal": "always", // Показывает терминал (если нужно)
+                "focus": false, // Не переводить фокус на терминал
+                "panel": "dedicated", // Использовать отдельный терминал
+                "clear": true //Стереть все, что было в терминале
+            },
+            "detail": "Обновить настройки clangd"
+        },
+        /*================  clangd Udpate ================*/
+
         /*==== Общая задача, которая будет билдить проект и выводить, сколько прошивка заняла места ====*/
         {
             "label": "Run All Tasks", //Выполнить все задачи
             "dependsOrder": "sequence", // Выполнять задачи последовательно
             "dependsOn": [
                 "Build Project",
+                "Clangd_update",
                 "Build Analyzer"
+                
             ],
             "problemMatcher": [],
             "group": {
@@ -154,4 +178,20 @@
         /*==== Общая задача, которая будет билдить проект и выводить, сколько прошивка заняла места ====*/
     ]
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
