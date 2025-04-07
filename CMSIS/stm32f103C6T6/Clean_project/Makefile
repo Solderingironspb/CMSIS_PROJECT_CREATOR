@@ -47,11 +47,6 @@ Core/Src/syscalls.c \
 Core/Src/sysmem.c \
 Core/Src/system_stm32f1xx.c
 
-# Явно укажем путь до стандартных библиотек. Это на самом деле не особо нужно, но Clangd
-# иначе не поймет и будет показывать ошибки там, где их нет...
-STD_C_INCLUDES = C:/dev_tools/STM32_tools/gnu-tools-for-stm32.12.3/tools/arm-none-eabi/include
-C_INCLUDES += $(STD_C_INCLUDES)
-
 # Assembly (Обратите внимание, почему-то STM32 выпускает ASM файлы, 
 # то с расширением *.S, то c расширением *.s). Это важно. 
 # Для унификации переименуйте в *.s (с маленькой буквой)
@@ -66,6 +61,12 @@ Core/Startup/startup_stm32f103c6tx.s
 C_INCLUDES = \
 Core/Inc/ \
 Drivers/CMSIS/
+
+# Явно укажем путь до стандартных библиотек. Это на самом деле не особо нужно, но Clangd
+# иначе не поймет и будет показывать ошибки там, где их нет...
+STD_C_INCLUDES = C:/dev_tools/STM32_tools/gnu-tools-for-stm32.12.3/tools/arm-none-eabi/include
+C_INCLUDES += $(STD_C_INCLUDES)
+
 # Assembly includes
 AS_INCLUDES = 
 
