@@ -1,0 +1,74 @@
+ARM GAS  C:\Users\SOLDER~1\AppData\Local\Temp\ccZIHLCR.s 			page 1
+
+
+   1              		.cpu cortex-m0
+   2              		.arch armv6s-m
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.file	"main.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.main,"ax",%progbits
+  18              		.align	1
+  19              		.global	main
+  20              		.syntax unified
+  21              		.code	16
+  22              		.thumb_func
+  24              	main:
+  25              	.LFB40:
+  26              		.file 1 "Core/Src/main.c"
+   1:Core/Src/main.c **** #include "main.h"
+   2:Core/Src/main.c **** 
+   3:Core/Src/main.c **** int main(void) {
+  27              		.loc 1 3 16
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 1, uses_anonymous_args = 0
+  31 0000 80B5     		push	{r7, lr}
+  32              		.cfi_def_cfa_offset 8
+  33              		.cfi_offset 7, -8
+  34              		.cfi_offset 14, -4
+  35 0002 00AF     		add	r7, sp, #0
+  36              		.cfi_def_cfa_register 7
+  37              	.L2:
+   4:Core/Src/main.c **** 
+   5:Core/Src/main.c **** 	while (1) {
+  38              		.loc 1 5 8 discriminator 1
+  39 0004 FEE7     		b	.L2
+  40              		.cfi_endproc
+  41              	.LFE40:
+  43              		.text
+  44              	.Letext0:
+ARM GAS  C:\Users\SOLDER~1\AppData\Local\Temp\ccZIHLCR.s 			page 2
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+C:\Users\SOLDER~1\AppData\Local\Temp\ccZIHLCR.s:18     .text.main:00000000 $t
+C:\Users\SOLDER~1\AppData\Local\Temp\ccZIHLCR.s:24     .text.main:00000000 main
+                           .group:00000000 wm4.0.4c1577b45e89a7b63de7f514d8a51f3b
+                           .group:00000000 wm4.stm32f0xx.h.39.f667cdf3d9ffdd55deba4ac4a796438c
+                           .group:00000000 wm4.stm32f030x6.h.37.30db5a8075cb64152d217159c4510d82
+                           .group:00000000 wm4._newlib_version.h.4.bfdf54b0af045d4a71376ae00f63a22c
+                           .group:00000000 wm4.features.h.33.318b64d71e0957639cfb30f1db1f7ec8
+                           .group:00000000 wm4._default_types.h.15.247e5cd201eca3442cbf5404108c4935
+                           .group:00000000 wm4._intsup.h.10.48bafbb683905c4daa4565a85aeeb264
+                           .group:00000000 wm4._stdint.h.10.c24fa3af3bc1706662bb5593a907e841
+                           .group:00000000 wm4.stdint.h.23.d53047a68f4a85177f80b422d52785ed
+                           .group:00000000 wm4.cmsis_version.h.32.4d5822004c01a829a975260e854b5f8e
+                           .group:00000000 wm4.core_cm0.h.66.608acc5992a3a56ab454582ca0035b64
+                           .group:00000000 wm4.cmsis_gcc.h.26.60b910ef2cf8eb62703f669ce6a864b2
+                           .group:00000000 wm4.core_cm0.h.127.8376da717d3d1986f1bf8fce150d521c
+                           .group:00000000 wm4.stm32f030x6.h.428.ee334dbe4987ed1ccb567bd51e93520a
+                           .group:00000000 wm4.stm32f0xx.h.180.d904ee57a181b08e8ce3655ddde8b1f1
+
+NO UNDEFINED SYMBOLS

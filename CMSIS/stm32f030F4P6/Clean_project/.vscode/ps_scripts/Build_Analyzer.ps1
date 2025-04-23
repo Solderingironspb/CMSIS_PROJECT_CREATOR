@@ -1,4 +1,4 @@
-#   Build Analyzer v1.0
+﻿#   Build Analyzer v1.0
 #   Автор: Волков Олег
 #   Дата создания скрипта: 26.02.2025
 #   GitHub: https://github.com/Solderingironspb
@@ -164,6 +164,7 @@ $data = @(
 
 # Вывод таблицы
 $data | Format-Table -AutoSize 
+
 
 
 
