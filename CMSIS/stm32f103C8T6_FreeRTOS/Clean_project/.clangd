@@ -1,4 +1,30 @@
+CompileFlags:
+  Compiler: C:/dev_tools/STM32_tools/gnu-tools-for-stm32.12.3/tools/arm-none-eabi
+  Add:
+    - -isystem
+    - C:/dev_tools/STM32_tools/gnu-tools-for-stm32.12.3/tools/arm-none-eabi/include
+    - -isystem
+    - C:/dev_tools/STM32_tools/gnu-tools-for-stm32.12.3/tools/arm-none-eabi/include/sys
+    - --target=arm-none-eabi
+    - -D__GNUC__
+    - -DDEBUG 
+    - -DSTM32F103xB
+    - -Wno-unknown-pragmas 
+    - -include
+    - stdint.h
+    - -include
+    - Drivers/CMSIS/stm32f103xb.h
+    - -include
+    - Core/Inc/main.h
+    - -include
+    - FreeRTOS/FreeRTOSConfig.h
+    - -include
+    - FreeRTOS/FreeRTOS.h
+    - -ferror-limit=0
+
 Diagnostics:
   UnusedIncludes: None
   Suppress:
-    - pp_including_mainfile_in_preamble  # Игнорировать ошибку рекурсивного включения
+    - pp_including_mainfile_in_preamble
+    - unused-includes
+   
