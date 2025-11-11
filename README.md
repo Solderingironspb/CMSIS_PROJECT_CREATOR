@@ -1,4 +1,4 @@
-# CMSIS_PROJECT_CREATOR
+# CMSIS_PROJECT_CREATOR + (Поддержка Visual Studio Code for Embedded v2.0)
 ## Скрипты для создания нового проекта под CMSIS без CubeMX
 ![Снимок](https://user-images.githubusercontent.com/68805120/215838136-b42ab71d-347e-44ae-a406-ae4ceee3a98c.PNG)
 ### *Для тех, кому надоело каждый раз собирать новый проект под CMSIS при помощи CubeMX.*
