@@ -138,7 +138,7 @@ INSTRUCTION_SET = -mthumb
 FPU =
 FLOAT_ABI = -mfloat-abi=soft
 
-MCU = $(CPU) $(INCTRUCTION_SET) $(FPU) $(FLOAT_ABI) -specs=nano.specs
+MCU = $(CPU) $(INSTRUCTION_SET) $(FPU) $(FLOAT_ABI) -specs=nano.specs
 
 #######################################################################################################################################
 # MCU_GCC_Compiler (CFLAGS) (ASFLAGS)
