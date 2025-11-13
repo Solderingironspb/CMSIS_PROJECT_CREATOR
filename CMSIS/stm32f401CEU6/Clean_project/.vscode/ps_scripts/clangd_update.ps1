@@ -1,6 +1,6 @@
-#   clangd_update v1.0
+#   clangd_update v1.1
 #   Автор: Волков Олег
-#   Дата создания скрипта: 25.10.2025
+#   Дата создания скрипта: 12.11.2025
 #   ВАЖНО: Работает под PowerShell (Core, 7+)
 #   Для установки в Windows откройте powershell и введите: winget install Microsoft.Powershell 
 #   Для установки в Linux откройте konsole (на примере Debian 13) и введите: sudo snap install powershell --classic
@@ -50,46 +50,73 @@ Diagnostics:
 }
 
 # Функция для обновления существующего файла
+# Функция для обновления существующего файла
 function Update-ClangdFile {
     param([string[]]$Content)
     
     $inCompileFlags = $false
     $inAddSection = $false
+    $inRemoveSection = $false
     $otherSections = @()
     $otherFlags = @()
+    $removeFlags = @()
+    $compileFlagsContent = @()
     
-    # Собираем все флаги кроме -isystem из секции Add
+    # Собираем все секции
     for ($i = 0; $i -lt $Content.Length; $i++) {
         $line = $Content[$i]
         $trimmedLine = $line.Trim()
         
         if ($trimmedLine -eq "CompileFlags:") {
             $inCompileFlags = $true
+            $compileFlagsContent += $line
             continue
         }
         
-        if ($inCompileFlags -and $trimmedLine -eq "Add:") {
-            $inAddSection = $true
-            continue
-        }
-        
-        if ($inAddSection) {
-            if ($trimmedLine.StartsWith("- -isystem")) {
-                # Пропускаем строку -isystem и следующую за ней (путь)
-                $i++ # Пропускаем следующую строку пути
+        if ($inCompileFlags) {
+            if ($trimmedLine -eq "Add:") {
+                $inAddSection = $true
+                $inRemoveSection = $false
+                $compileFlagsContent += $line
                 continue
-            } elseif ($trimmedLine.StartsWith("-")) {
-                # Сохраняем другие флаги
-                $otherFlags += $line
-            } elseif (-not $trimmedLine.StartsWith("-") -and $trimmedLine -ne "" -and -not $line.StartsWith(" ")) {
-                # Конец секции Add и CompileFlags
+            }
+            
+            if ($trimmedLine -eq "Remove:") {
                 $inAddSection = $false
+                $inRemoveSection = $true
+                $compileFlagsContent += $line
+                continue
+            }
+            
+            if ($inAddSection) {
+                if ($trimmedLine.StartsWith("- -isystem")) {
+                    # Пропускаем старые -isystem флаги
+                    $i++ # Пропускаем следующую строку пути
+                    continue
+                } elseif ($trimmedLine.StartsWith("-")) {
+                    # Сохраняем другие флаги
+                    $otherFlags += $line
+                } else {
+                    $compileFlagsContent += $line
+                }
+            } elseif ($inRemoveSection) {
+                if ($trimmedLine.StartsWith("-")) {
+                    # Сохраняем флаги Remove
+                    $removeFlags += $line
+                } else {
+                    $compileFlagsContent += $line
+                }
+            } else {
+                $compileFlagsContent += $line
+            }
+            
+            # Проверяем конец секции CompileFlags
+            if (-not $line.StartsWith(" ") -and -not $line.StartsWith("  ") -and $trimmedLine -ne "" -and $trimmedLine -ne "CompileFlags:" -and $trimmedLine -ne "Add:" -and $trimmedLine -ne "Remove:") {
                 $inCompileFlags = $false
+                $inAddSection = $false
+                $inRemoveSection = $false
                 $otherSections += $line
             }
-        } elseif ($inCompileFlags -and -not $inAddSection) {
-            # Пропускаем другие строки в CompileFlags (например старый Compiler)
-            continue
         } else {
             # Сохраняем все остальные секции
             $otherSections += $line
@@ -99,7 +126,7 @@ function Update-ClangdFile {
     # Собираем финальный вывод
     $finalOutput = @()
     
-    # Добавляем обновленную секцию CompileFlags в начало
+    # Добавляем обновленную секцию CompileFlags
     $finalOutput += "CompileFlags:"
     $finalOutput += "  Compiler: $CompilerPath"
     $finalOutput += "  Add:"
@@ -108,11 +135,20 @@ function Update-ClangdFile {
     $finalOutput += "    - -isystem" 
     $finalOutput += "    - $IncludePath2"
     
-    # Добавляем остальные флаги
+    # Добавляем остальные флаги Add
     foreach ($flag in $otherFlags) {
         $finalOutput += $flag
     }
     
+    # Добавляем секцию Remove если она была
+    if ($removeFlags.Count -gt 0) {
+        $finalOutput += "  Remove:"
+        foreach ($flag in $removeFlags) {
+            $finalOutput += $flag
+        }
+    }
+    
+    # Добавляем пустую строку перед другими секциями
     $finalOutput += ""
     
     # Добавляем все остальные секции
