@@ -17,6 +17,7 @@
     },
 
        // === ДОБАВЬТЕ ЭТИ НАСТРОЙКИ ДЛЯ clangd ===
+    "clangd.enable": true,
     "C_Cpp.intelliSenseEngine": "disabled",
     "C_Cpp.autocomplete": "disabled",
     "C_Cpp.errorSquiggles": "disabled",
