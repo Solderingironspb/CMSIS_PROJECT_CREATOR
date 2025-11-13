@@ -1,6 +1,6 @@
-#   ld analyzer v 1.0 (Скрипт еще сырой. Пытаюсь сделать универсальным для ARM и RISC-V. Большую часть писал Deep Seek)
+#   ld analyzer v 1.1 (Скрипт еще сырой. Пытаюсь сделать универсальным для ARM и RISC-V. Большую часть писал Deep Seek)
 #   Автор: Волков Олег
-#   Дата создания скрипта: 05.11.2025
+#   Дата создания скрипта: 12.11.2025
 #   GitHub: https://github.com/Solderingironspb
 #   Группа Вконтакте: https://vk.com/solderingiron.stm32
 #   YouTube: https://www.youtube.com/channel/UCzZKTNVpcMSALU57G1THoVw
@@ -186,6 +186,9 @@ def analyze_linker_script(file_path, output_format="text"):
         (r'\.dlalign\s*:\s*\{[^}]+\}\s*>FLASH', '.dlalign', 'FLASH', 'FLASH'),
         (r'\.dalign\s*:\s*\{[^}]+\}\s*>RAM', '.dalign', 'RAM', 'FLASH'),
         (r'\.stack\s*:\s*\{[^}]+\}\s*>RAM', '.stack', 'RAM', 'RAM'),
+        (r'\.highcodelalign\s*:\s*\{[^}]+\}\s*>FLASH\s+AT>\s*FLASH', '.highcodelalign', 'FLASH', 'FLASH'),
+        (r'\.highcode\s*:\s*\{[^}]+\}\s*>RAM\s+AT>\s*FLASH', '.highcode', 'RAM', 'FLASH'),
+        (r'\.stack\s*ORIGIN\(RAM\)\s*\+\s*LENGTH\(RAM\)\s*-\s*__stack_size\s*:\s*\{[^}]+\}\s*>RAM', '.stack', 'RAM', 'RAM'),
     ]
 
     for pattern, section_name, location, load_memory in common_sections:
