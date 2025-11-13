@@ -13,7 +13,7 @@
 OS_IS_LINUX = 0
 
 #Имя папки пользователя(для Linux)
-USER_FOLDER_NAME = Solderingiron
+USER_FOLDER_NAME = oleg
 
 #######################################################################################################################################
 # Системные include-директории
@@ -249,9 +249,19 @@ update-json:
 update-clang:
 	pwsh -executionpolicy bypass -File .vscode/ps_scripts/clangd_update.ps1 "$(COMPILER_PATH)" "$(ISYSTEM_INCLUDE_PATH_1)" "$(ISYSTEM_INCLUDE_PATH_2)"
 
+#######################################################################################################################################
+# *.ld Анализатор
+#######################################################################################################################################
+
+ifeq ($(OS_IS_LINUX), 1)
+# Настройки для Linux
+ld_analyzer:
+	python3 .vscode/py_scripts/ld_analyzer.py $(LDSCRIPT) json > memory_config.json
+else
+# Настройки для Windows
 ld_analyzer:
 	python .vscode/py_scripts/ld_analyzer.py $(LDSCRIPT) json > memory_config.json
-
+endif
 
 #######################################################################################################################################
 # clean up (Очистить проект)

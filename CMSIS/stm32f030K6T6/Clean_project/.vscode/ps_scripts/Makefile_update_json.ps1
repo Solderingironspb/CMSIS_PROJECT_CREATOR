@@ -1,6 +1,6 @@
-#   Читаю Makefile. Переменная update json v1.1
+#   Читаю Makefile. Переменная update json v1.2
 #   Автор: Волков Олег
-#   Дата создания скрипта: 29.10.2025
+#   Дата создания скрипта: 12.11.2025
 #   ВАЖНО: Работает под PowerShell (Core, 7+)
 #   Для установки в Windows откройте powershell и введите: winget install Microsoft.Powershell 
 #   Для установки в Linux откройте konsole (на примере Debian 13) и введите: sudo snap install powershell --classic
@@ -366,48 +366,29 @@ Write-Host "Работаю с файлом: .vscode/tasks.json" -ForegroundColor
 $newPath = $GNU_TOOLCHAIN_SIZE_PATH.Replace("/", "\").Replace("\", "/")
 
 try {
-    $content = Get-Content -Path ".vscode/tasks.json"
-    $inBuildAnalyzer = $false
-    $inArgs = $false
-    $argCount = 0
-    $updatedContent = @()
+    # Читаем и парсим JSON
+    $jsonContent = Get-Content -Path ".vscode/tasks.json" -Raw | ConvertFrom-Json
+    
     $changed = $false
     
-    foreach ($line in $content) {
-        if ($line -match '"label":\s*"Build Analyzer"') {
-            $inBuildAnalyzer = $true
-        }
-        
-        if ($inBuildAnalyzer -and $line -match '"args":\s*\[') {
-            $inArgs = $true
-            $argCount = 0
-        }
-        
-        # Если мы внутри args и строка содержит аргумент в кавычках
-        if ($inArgs -and $line -match '^\s*"[^"]*",?\s*') {
-            $argCount++
-            
-            if ($argCount -eq 7) {
-                $line = $line -replace '"[^"]*"', "`"$newPath`""
+    # Ищем таску "Build Analyzer"
+    foreach ($task in $jsonContent.tasks) {
+        if ($task.label -eq "Build Analyzer") {
+            # Проверяем, что есть минимум 6 аргументов
+            if ($task.args.Count -ge 6) {
+                # Меняем 6-й аргумент (индекс 5)
+                $task.args[5] = $newPath
                 $changed = $true
             }
+            break
         }
-        
-        # Если вышли из блока args
-        if ($inArgs -and $line -match '\]') {
-            $inArgs = $false
-        }
-        
-        # Если вышли из таски Build Analyzer
-        if ($inBuildAnalyzer -and $line -match '},') {
-            $inBuildAnalyzer = $false
-        }
-        
-        $updatedContent += $line
     }
     
     if ($changed) {
-        if (Write-FileWithRetry -Path ".vscode/tasks.json" -Value ($updatedContent -join "`r`n")) {
+        # Конвертируем обратно в JSON с красивым форматированием
+        $updatedJson = $jsonContent | ConvertTo-Json -Depth 10
+        
+        if (Write-FileWithRetry -Path ".vscode/tasks.json" -Value $updatedJson) {
             Write-Host "Success" -ForegroundColor Green
         } else {
             Write-Host "Error" -ForegroundColor Red
