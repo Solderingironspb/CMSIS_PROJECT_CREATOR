@@ -1,343 +1,330 @@
-//   ВАЖНО: Работает под PowerShell (Core, 7+)
-//   Для установки в Windows откройте powershell и введите: winget install Microsoft.Powershell
-//   Для установки в Linux откройте konsole (на примере Debian 13) и введите: sudo snap install powershell --classic 
 {
-    "version": "2.0.0",
-    "tasks": [
-        //Собрать проект. Просто страндартная команда make all
-        {
-            "label": "Build",
-            "type": "shell",
-            "command": "make -j12 all", //Команда для сборки проекта
-            "icon": {
-                "color": "terminal.ansiYellow",
-                "id": "tools"
-            },
-            "problemMatcher": [
-                "$gcc"
-            ],
-            "presentation": {
-                "echo": true, // Отключает вывод команды задачи (* Executing task: ...)
-                "reveal": "always", // Показывает терминал (если нужно)
-                "focus": false, // Не переводить фокус на терминал
-                "panel": "dedicated", // Использовать отдельный терминал
-                "clear": true //Стереть все, что было в терминале
-            },
-            "detail": "Собрать проект",
-            "options": {
-                "statusbar": {
-                    "hide": true //не будем отображать этот таск в такс баре (скрытая задача)
-                }
-            }
-        },
-        //Считай та же сборка проекта, только используется compiledb, который точно также выполнит make all + создаст файл compile_commands.json для правильной работы языкового сервера clangd + запустит скрипт, отображающий занятое место прошивки мк
-        {
-            "label": "Build Project",
-            "dependsOrder": "sequence", // Выполнять задачи последовательно
-            "dependsOn": [
-                "compile_commands.json_update",
-                "ld file Analyzer",
-                "Build Analyzer",
-                "Restart Clangd Server"
-            ],
-            "icon": {
-                "color": "terminal.ansiYellow",
-                "id": "tools"
-            },
-            "problemMatcher": [],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "presentation": {
-                "echo": true, // Отключает вывод команды задачи (* Executing task: ...)
-                "reveal": "always", // Показывает терминал (если нужно)
-                "focus": false, // Не переводить фокус на терминал
-                "panel": "dedicated", // Использовать отдельный терминал
-                "clear": true //Стереть все, что было в терминале
-            },
-            "detail": "Собрать проект и запустить анализатор памяти"
-        },
-        //Очистить проект. На этапе разработки решил, что это будет просто удаление папки Debug + удаление папки .cache для clangd
-        {
-            "label": "Clean Project", //Очистка проекта
-            "type": "shell",
-            "command": "make clean", // Команда для очистки проекта
-            "problemMatcher": [],
-            "icon": {
-                "color": "terminal.ansiRed",
-                "id": "trash"
-            },
-            "presentation": {
-                "echo": true, // Отключает вывод команды задачи (* Executing task: ...)
-                "reveal": "always", // Показывает терминал (если нужно)
-                "focus": false, // Не переводить фокус на терминал
-                "panel": "shared", // Использовать отдельный терминал
-                "clear": true //Стереть все, что было в терминале
-            },
-            "detail": "Очистить проект"
-        },        // Функция для вывода информации о занятой памяти микроконтроллера, согласно *.ld файлу
-        {
-            "label": "ld file Analyzer",
-            "type": "shell",
-            "command": "make ld_analyzer",
-            "icon": {
-                "color": "terminal.ansiGreen",
-                "id": "graph"
-            },
-            "problemMatcher": [],
-            "presentation": {
-                "echo": false, // Отключает вывод команды задачи (* Executing task: ...)
-                "reveal": "always", // Показывает терминал (если нужно)
-                "focus": false, // Не переводить фокус на терминал
-                "panel": "dedicated", // Использовать отдельный терминал
-                "clear": true //Стереть все, что было в терминале
-            },
-            "detail": "Создание json файла memory_config на основании ld файла."
-        },
-        // Функция для вывода информации о занятой памяти микроконтроллера, согласно *.ld файлу
-        {
-            "label": "Build Analyzer",
-            "type": "shell",
-            "command": "python",
-            "args": [
-                ".vscode/py_scripts/Build_Analyzer.py", //Расположение скрипта
-                //Введите свои настройки:
-                "Debug/Clean_project.elf", //Расположение *.elf файла
-                "Debug/Clean_project.map", //Расположение *.map файла
-                "memory_config.json",
-                "False",
-                "C:/dev_tools/STM32_tools/gnu-tools-for-stm32.12.3/tools/bin/arm-none-eabi-size.exe"
-            ],
-            "icon": {
-                "color": "terminal.ansiGreen",
-                "id": "graph"
-            },
-            "problemMatcher": [],
-            "presentation": {
-                "echo": false, // Отключает вывод команды задачи (* Executing task: ...)
-                "reveal": "always", // Показывает терминал (если нужно)
-                "focus": false, // Не переводить фокус на терминал
-                "panel": "dedicated", // Использовать отдельный терминал
-                "clear": true //Стереть все, что было в терминале
-            },
-            "detail": "Получение информации о памяти"
-        },
-        //Вернуть микроконтроллер в работу после отладки
-        {
-            "label": "Monitor resume",
-            "type": "shell",
-            "command": "make resume",
-            "icon": {
-                "color": "terminal.ansiGreen",
-                "id": "vscode"
-            },
-            "problemMatcher": [],
-            "presentation": {
-                "echo": true, // Отключает вывод команды задачи (* Executing task: ...)
-                "reveal": "always", // Показывает терминал (если нужно)
-                "focus": false, // Не переводить фокус на терминал
-                "panel": "dedicated", // Использовать отдельный терминал
-                "clear": true //Стереть все, что было в терминале
-            },
-            "detail": "Продолжить работу микроконтроллера после отладки"
-        },
-        //Отыскать все пути файлов, которые требуются для корректной работы Makefile
-        {
-            "label": "Find files for Makefile",
-            "type": "shell",
-            "command": "pwsh",
-            "args": [
-                "-ExecutionPolicy",
-                "Bypass", //Политика для powershell, чтоб дал запустить скрипт
-                "-File",
-                ".vscode/ps_scripts/Find_files_for_Makefile.ps1" //Расположение скрипта
-            ],
-            "icon": {
-                "color": "terminal.ansiCyan",
-                "id": "book"
-            },
-            "problemMatcher": [],
-            "presentation": {
-                "echo": false, // Отключает вывод команды задачи (* Executing task: ...)
-                "reveal": "always", // Показывает терминал (если нужно)
-                "focus": false, // Не переводить фокус на терминал
-                "panel": "dedicated", // Использовать отдельный терминал
-                "clear": true //Стереть все, что было в терминале
-            },
-            "detail": "Отыскать все пути файлов, которые требуются для корректной работы Makefile"
-        },
-        //Я не знал, как назвать данную таску, но что она делает: она смотрит, с какой ОС ты сидишь, смотрит сколько логических процессоров у твоего CPU, 
-        //дабы быстрее компилировать твой проект, подменяет в *.json файлах все значения в соответствии с твоей конфигурацией, обновляет конфигурацию языкового сервера clangd. 
-        //Одним словом - она нужна тогда, когда проект открывается на другом ПК, либо с другой учетной записи.
-        {
-            "label": "Update configuration", //
-            "dependsOrder": "sequence", // Выполнять задачи последовательно
-            "dependsOn": [
-                "OS_probe",
-                "Makefile: Update JSON files (Experimental)",
-                "clangd_update",
-                "compile_commands.json_update",
-                "ld file Analyzer",
-                "Build Analyzer",
-                "Restart Clangd Server"
-            ],
-            "icon": {
-                "color": "terminal.ansiYellow",
-                "id": "refresh"
-            },
-            "problemMatcher": [],
-            "presentation": {
-                "echo": true, // Отключает вывод команды задачи (* Executing task: ...)
-                "reveal": "always", // Показывает терминал (если нужно)
-                "focus": false, // Не переводить фокус на терминал
-                "panel": "dedicated", // Использовать отдельный терминал
-                "clear": true //Стереть все, что было в терминале
-            },
-            "detail": "Пересобирает проект под ваш ПК (Учитывается ОС, учетная запись, пути до файлов, количество лог. процессоров и прочее)"
-        },
-        // Получить информацию по состоянию ОС и имени пользователя
-        {
-            "label": "OS_probe", //Получить информацию по состоянию ОС и имени пользователя
-            "type": "shell",
-            "command": "pwsh",
-            "args": [
-                "-ExecutionPolicy",
-                "Bypass", //Политика для powershell, чтоб дал запустить скрипт
-                "-File",
-                ".vscode/ps_scripts/OS_probe.ps1" //Расположение скрипта
-            ],
-            "icon": {
-                "color": "terminal.ansiCyan",
-                "id": "dialog-info"
-            },
-            "problemMatcher": [],
-            "presentation": {
-                "echo": false, // Отключает вывод команды задачи (* Executing task: ...)
-                "reveal": "always", // Показывает терминал (если нужно)
-                "focus": false, // Не переводить фокус на терминал
-                "panel": "dedicated", // Использовать отдельный терминал
-                "clear": true //Стереть все, что было в терминале
-            },
-            "detail": "Получить информацию по состоянию ОС и имени пользователя",
-            "options": {
-                "statusbar": {
-                    "hide": true //не будем отображать этот таск в такс баре (скрытая задача)
-                }
-            }
-        },
-        //Обновить JSON файлы в соответствии с Makefile
-        {
-            "label": "Makefile: Update JSON files (Experimental)", //Обновление JSON файлов в соответствии с Makefile
-            "type": "shell",
-            "command": "make update-json",
-            "icon": {
-                "color": "terminal.ansiCyan",
-                "id": "json"
-            },
-            "problemMatcher": [],
-            "presentation": {
-                "echo": true, // Отключает вывод команды задачи (* Executing task: ...)
-                "reveal": "always", // Показывает терминал (если нужно)
-                "focus": false, // Не переводить фокус на терминал
-                "panel": "dedicated", // Использовать отдельный терминал
-                "clear": true //Стереть все, что было в терминале
-            },
-            "detail": "Обновить JSON файлы в соответствии с Makefile",
-            "options": {
-                "statusbar": {
-                    "hide": true //не будем отображать этот таск в такс баре (скрытая задача)
-                }
-            }
-        },
-        //Обновить файл .clangd в соответствии с вашей операционной системой
-        {
-            "label": "clangd_update",
-            "type": "shell",
-            "command": "make update-clang",
-            "icon": {
-                "color": "terminal.ansiGreen",
-                "id": "search-save"
-            },
-            "problemMatcher": [],
-            "presentation": {
-                "echo": true, // Отключает вывод команды задачи (* Executing task: ...)
-                "reveal": "always", // Показывает терминал (если нужно)
-                "focus": false, // Не переводить фокус на терминал
-                "panel": "dedicated", // Использовать отдельный терминал
-                "clear": true //Стереть все, что было в терминале
-            },
-            "detail": "Обновить файл .clangd в соответствии с вашей операционной системой",
-            "options": {
-                "statusbar": {
-                    "hide": true //не будем отображать этот таск в такс баре (скрытая задача)
-                }
-            }
-        },
-        //Скомпилировать проект, а также создать файл compile_commands.json для правильной работы clangd
-        {
-            "label": "compile_commands.json_update",
-            "type": "shell",
-            "command": "compiledb make -j12 all",
-            "icon": {
-                "color": "terminal.ansiGreen",
-                "id": "add"
-            },
-            "problemMatcher": [],
-            "presentation": {
-                "echo": true, // Отключает вывод команды задачи (* Executing task: ...)
-                "reveal": "always", // Показывает терминал (если нужно)
-                "focus": false, // Не переводить фокус на терминал
-                "panel": "dedicated", // Использовать отдельный терминал
-                "clear": true //Стереть все, что было в терминале
-            },
-            "detail": "Обновить файл compile_commands.json",
-            "options": {
-                "statusbar": {
-                    "hide": true //не будем отображать этот таск в такс баре (скрытая задача)
-                }
-            }
-        },
-        //Перезагрузить языковой сервер clangd. 
-        {
-            "label": "Restart Clangd Server",
-            "type": "process",
-            "command": "${command:clangd.restart}",
-            "icon": {
-                "color": "terminal.ansiGreen",
-                "id": "refresh"
-            },
-            "problemMatcher": [],
-            "detail": "Перезагрузить языковой сервер clangd"
-        },
-        //Данная таска создана только лишь для запуска дебага. А так по сути делает то же, что и Build project.
-        {
-            "label": "Run All Tasks",
-            "dependsOrder": "sequence", // Выполнять задачи последовательно
-            "dependsOn": [
-                "compile_commands.json_update",
-                "ld file Analyzer",
-                "Build Analyzer",
-                "Restart Clangd Server"
-            ],
-            "icon": {
-                "color": "terminal.ansiYellow",
-                "id": "tools"
-            },
-            "problemMatcher": [],
-             "presentation": {
-                "echo": true, // Отключает вывод команды задачи (* Executing task: ...)
-                "reveal": "always", // Показывает терминал (если нужно)
-                "focus": false, // Не переводить фокус на терминал
-                "panel": "dedicated", // Использовать отдельный терминал
-                "clear": true //Стереть все, что было в терминале
-            },
-            "detail": "Данная таска создана только лишь для запуска дебага. А так по сути делает то же, что и Build project",
-            "options": {
-                "statusbar": {
-                    "hide": true //не будем отображать этот таск в такс баре (скрытая задача)
-                }
-            }
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build",
+      "type": "shell",
+      "command": "make -j12 all",
+      "icon": {
+        "color": "terminal.ansiYellow",
+        "id": "tools"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true
+      },
+      "detail": "Собрать проект",
+      "options": {
+        "statusbar": {
+          "hide": true
         }
-    ]
+      }
+    },
+    {
+      "label": "Build Project",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "compile_commands.json_update",
+        "ld file Analyzer",
+        "Build Analyzer",
+        "Restart Clangd Server"
+      ],
+      "icon": {
+        "color": "terminal.ansiYellow",
+        "id": "tools"
+      },
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true
+      },
+      "detail": "Собрать проект и запустить анализатор памяти"
+    },
+    {
+      "label": "Clean Project",
+      "type": "shell",
+      "command": "make clean",
+      "problemMatcher": [],
+      "icon": {
+        "color": "terminal.ansiRed",
+        "id": "trash"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "clear": true
+      },
+      "detail": "Очистить проект"
+    },
+    {
+      "label": "ld file Analyzer",
+      "type": "shell",
+      "command": "make ld_analyzer",
+      "icon": {
+        "color": "terminal.ansiGreen",
+        "id": "graph"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "echo": false,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true
+      },
+      "detail": "Создание json файла memory_config на основании ld файла."
+    },
+    {
+      "label": "Build Analyzer",
+      "type": "shell",
+      "command": "python",
+      "windows": {
+        "command": "python"
+      },
+      "linux": {
+        "command": "python3"
+      },
+      "args": [
+        ".vscode/py_scripts/Build_Analyzer.py",
+        "Debug/Clean_project.elf",
+        "Debug/Clean_project.map",
+        "memory_config.json",
+        "False",
+        "C:/dev_tools/STM32_tools/gnu-tools-for-stm32.12.3/tools/bin/arm-none-eabi-size.exe"
+      ],
+      "icon": {
+        "color": "terminal.ansiGreen",
+        "id": "graph"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "echo": false,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true
+      },
+      "detail": "Получение информации о памяти"
+    },
+    {
+      "label": "Monitor resume",
+      "type": "shell",
+      "command": "make resume",
+      "icon": {
+        "color": "terminal.ansiGreen",
+        "id": "vscode"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true
+      },
+      "detail": "Продолжить работу микроконтроллера после отладки"
+    },
+    {
+      "label": "Find files for Makefile",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        ".vscode/ps_scripts/Find_files_for_Makefile.ps1"
+      ],
+      "icon": {
+        "color": "terminal.ansiCyan",
+        "id": "book"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "echo": false,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true
+      },
+      "detail": "Отыскать все пути файлов, которые требуются для корректной работы Makefile"
+    },
+    {
+      "label": "Update configuration",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "OS_probe",
+        "Makefile: Update JSON files (Experimental)",
+        "clangd_update",
+        "compile_commands.json_update",
+        "ld file Analyzer",
+        "Build Analyzer",
+        "Restart Clangd Server"
+      ],
+      "icon": {
+        "color": "terminal.ansiYellow",
+        "id": "refresh"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true
+      },
+      "detail": "Пересобирает проект под ваш ПК (Учитывается ОС, учетная запись, пути до файлов, количество лог. процессоров и прочее)"
+    },
+    {
+      "label": "OS_probe",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        ".vscode/ps_scripts/OS_probe.ps1"
+      ],
+      "icon": {
+        "color": "terminal.ansiCyan",
+        "id": "dialog-info"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "echo": false,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true
+      },
+      "detail": "Получить информацию по состоянию ОС и имени пользователя",
+      "options": {
+        "statusbar": {
+          "hide": true
+        }
+      }
+    },
+    {
+      "label": "Makefile: Update JSON files (Experimental)",
+      "type": "shell",
+      "command": "make update-json",
+      "icon": {
+        "color": "terminal.ansiCyan",
+        "id": "json"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true
+      },
+      "detail": "Обновить JSON файлы в соответствии с Makefile",
+      "options": {
+        "statusbar": {
+          "hide": true
+        }
+      }
+    },
+    {
+      "label": "clangd_update",
+      "type": "shell",
+      "command": "make update-clang",
+      "icon": {
+        "color": "terminal.ansiGreen",
+        "id": "search-save"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true
+      },
+      "detail": "Обновить файл .clangd в соответствии с вашей операционной системой",
+      "options": {
+        "statusbar": {
+          "hide": true
+        }
+      }
+    },
+    {
+      "label": "compile_commands.json_update",
+      "type": "shell",
+      "command": "compiledb make -j12 all",
+      "icon": {
+        "color": "terminal.ansiGreen",
+        "id": "add"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true
+      },
+      "detail": "Обновить файл compile_commands.json",
+      "options": {
+        "statusbar": {
+          "hide": true
+        }
+      }
+    },
+    {
+      "label": "Restart Clangd Server",
+      "type": "process",
+      "command": "${command:clangd.restart}",
+      "icon": {
+        "color": "terminal.ansiGreen",
+        "id": "refresh"
+      },
+      "problemMatcher": [],
+      "detail": "Перезагрузить языковой сервер clangd"
+    },
+    {
+      "label": "Run All Tasks",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "compile_commands.json_update",
+        "ld file Analyzer",
+        "Build Analyzer",
+        "Restart Clangd Server"
+      ],
+      "icon": {
+        "color": "terminal.ansiYellow",
+        "id": "tools"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true
+      },
+      "detail": "Данная таска создана только лишь для запуска дебага. А так по сути делает то же, что и Build project",
+      "options": {
+        "statusbar": {
+          "hide": true
+        }
+      }
+    }
+  ]
 }
