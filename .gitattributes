@@ -1,0 +1,4 @@
+*.s -text
+*.S -text
+*.s linguist-language=Assembly
+*.S linguist-language=Assembly
