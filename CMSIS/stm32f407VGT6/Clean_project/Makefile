@@ -278,12 +278,19 @@ clean:
 #######################################################################################################################################
 # OpenOCD (Записать прошивку на мк, очистить память мк, продолжить работу мк после debug)
 #######################################################################################################################################
+#Именно для STM32 можно подсмотреть здесь https://openocd.org/doc/html/Flash-Commands.html
+#Здесь есть flash driver под соответствующую линейку мк:
+#stm32f1x - STM32F0, STM32F1 and STM32F3, GD32F1, GD32VF103 (RISC-V core), GD32F3 and GD32E23. APM32F0 and APM32F1
+#stm32f2x - STM32F2, STM32F4 and STM32F7 microcontroller families from STMicroelectronics include internal flash and use ARM Cortex-M3/M4/M7 cores. The driver also works for the APM32F4 series from Geehy Semiconductor.
+#stm32h7x - All members of the STM32H7 microcontroller families from STMicroelectronics include internal flash and use ARM Cortex-M7 core. 
+#stm32lx  - All members of the STM32L0 and STM32L1 microcontroller families from STMicroelectronics include internal flash and use ARM Cortex-M3 and Cortex-M0+ cores.
+#stm32l4x - All members of the STM32 C0, G0, G4, L4, L4+, L5, U0, U5, WB and WL microcontroller families from STMicroelectronics include internal flash and use ARM Cortex-M0+, M4 and M33 cores.
 
 flash: all
 	$(OPEN_OCD_BIN_PATH) -f $(OPEN_OCD_INTERFACE_PATH) -f $(OPEN_OCD_TARGET_PATH) -c "program $(BUILD_DIR)/$(TARGET).elf verify reset exit"
 
 erase: 
-	$(OPEN_OCD_BIN_PATH) -f $(OPEN_OCD_INTERFACE_PATH) -f $(OPEN_OCD_TARGET_PATH) -c "init; reset halt; stm32f1x mass_erase 0; reset run; exit"
+	$(OPEN_OCD_BIN_PATH) -f $(OPEN_OCD_INTERFACE_PATH) -f $(OPEN_OCD_TARGET_PATH) -c "init; reset halt; stm32f2x mass_erase 0; reset run; exit"
 
 resume:
 	$(OPEN_OCD_BIN_PATH) -f $(OPEN_OCD_INTERFACE_PATH) -f $(OPEN_OCD_TARGET_PATH) -c "init; reset halt; resume; exit"
