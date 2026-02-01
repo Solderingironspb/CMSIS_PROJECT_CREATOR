@@ -1,0 +1,16 @@
+{
+    "configurations": [
+        {
+            "name": "Clean_project", //Данную строку можно обновить через Makefile:Update JSON files (Experimental)
+            "includePath": ["${workspaceFolder}/Core/Inc//**", "${workspaceFolder}/Drivers/CMSIS//**"], //Данную строку можно обновить через Makefile:Update JSON files (Experimental)
+            "defines": ["DEBUG", "STM32F103xE"], //Данную строку можно обновить через Makefile:Update JSON files (Experimental)
+            "intelliSenseMode": "gcc-arm", //Стандартно "gcc-arm"
+            "compilerPath": "C:/dev_tools/STM32_tools/gnu-tools-for-stm32.12.3/tools/bin/arm-none-eabi-gcc.exe", //Данную строку можно обновить через Makefile:Update JSON files (Experimental)
+            "compilerArgs": ["-mcpu=cortex-m3", "-mthumb", "-mfloat-abi=soft", "-specs=nano.specs", "-g3", "-O0", "-std=gnu11", "-DDEBUG", "-DSTM32F103xE", "-ICore/Inc/", "-IDrivers/CMSIS/", "-Wall", "-fdata-sections", "-ffunction-sections", "-fstack-usage", "-MMD", "-MP", "-MF"], //Данную строку можно обновить через Makefile:Update JSON files (Experimental)
+            "cStandard": "c11" //Стандартно C11
+            ,
+            "compileCommands": "${workspaceFolder}/compile_commands.json"
+        }
+    ],
+    "version": 4
+}

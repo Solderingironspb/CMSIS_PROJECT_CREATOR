@@ -1,0 +1,38 @@
+{
+    //Рассматривать данные файлы, как json с комментариями (Чтоб ошибки не показывал, что комментарии присутствуют)
+    "files.associations": {
+        "c_cpp_properties.json": "jsonc",
+        "launch.json": "jsonc",
+        "tasks.json": "jsonc"
+    },
+    "cortex-debug.variableUseNaturalFormat": true,
+    
+    //Использовать по умолчанию терминал bash (для большей совместимости Makefile под windows и linux)
+    "terminal.integrated.defaultProfile.windows": "Git Bash",
+    "terminal.integrated.profiles.windows": {
+        "Git Bash": {
+            "path": "bash",
+            "args": []
+        }
+    },
+
+       // === ДОБАВЬТЕ ЭТИ НАСТРОЙКИ ДЛЯ clangd ===
+    "clangd.enable": true,
+    "C_Cpp.intelliSenseEngine": "disabled",
+    "C_Cpp.autocomplete": "disabled",
+    "C_Cpp.errorSquiggles": "disabled",
+    
+    // Настройки стандартов C/C++ для clangd
+    "clangd.fallbackFlags": [
+        "-std=c++17",
+        "-std=c11"
+    ],
+    
+    // Дополнительные настройки clangd
+    "clangd.arguments": [
+        "--enable-config",
+        "--header-insertion=never",
+        "--completion-style=detailed"
+    ]
+
+}

@@ -1,0 +1,22 @@
+BasedOnStyle: Google
+ColumnLimit: 0
+BinPackParameters: true
+BinPackArguments: true
+AllowShortBlocksOnASingleLine: true
+AllowShortFunctionsOnASingleLine: true
+IncludeBlocks: Merge
+BraceWrapping:
+  AfterFunction: false
+  AfterClass: false
+  AfterControlStatement: false
+  AfterEnum: false
+  AfterNamespace: false
+  AfterStruct: false
+  AfterUnion: false
+  BeforeCatch: false
+  BeforeElse: false
+  IndentBraces: false
+BreakBeforeBraces: Attach
+IndentWidth: 4
+AlignConsecutiveMacros: true
+SortIncludes: Never
